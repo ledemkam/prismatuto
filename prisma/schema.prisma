@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+model Task {
+ id        String   @id @default(cuid())
+ content     String
+ createAt   DateTime @default(now())
+ completed  Boolean  @default(false)
+  //category   Category? => relation one to one
+  category   Category[] // => relation one to many
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  catName      String
+  //taskId     String  @unique => relation one to one
+  taskId     String // => relation one to many
+  task       Task     @relation(fields: [taskId], references: [id])
+  tag        tag[] // => relation many to many
+}
+
+model tag {
+  id        String   @id @default(cuid())
+  tagName    String
+  taskId    String
+  category   Category[] // => relation many to many
+}
